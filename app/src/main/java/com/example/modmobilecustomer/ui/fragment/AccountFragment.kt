@@ -59,7 +59,8 @@ class AccountFragment : Fragment() {
         binding.tvUserNoInProfile.text = Shared_Preferences.getPhoneNo()
 
         binding.tvProfileDetails.setOnClickListener {
-            Toast.makeText(mainActivity, "Page not given", Toast.LENGTH_SHORT).show()
+            val navController = Navigation.findNavController(it)
+            navController.navigate(R.id.nav_profiledetails)
         }
 
         binding.tvSettings.setOnClickListener {

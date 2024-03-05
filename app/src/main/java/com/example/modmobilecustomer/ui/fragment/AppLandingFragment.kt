@@ -831,7 +831,7 @@ class AppLandingFragment : Fragment(), SlidingImagesURLAdapter.OnItemClickListen
                                 for (i in 0 until resource.data?.response?.data?.addressdata!!.size) {
                                     if (resource.data.response.data.addressdata[i].default_type.equals("Y")) {
                                         Shared_Preferences.setShippingAddress(resource.data.response.data.addressdata[i].locality+","+
-                                                resource.data.response.data.addressdata[i].city+","+ resource.data.response.data.addressdata[i].state)
+                                        resource.data.response.data.addressdata[i].city+","+ resource.data.response.data.addressdata[i].state)
                                         Shared_Preferences.setShippingState(resource.data.response.data.addressdata[i].state)
                                         Shared_Preferences.setShippingCity(resource.data.response.data.addressdata[i].city)
                                         Shared_Preferences.setShippingZip(resource.data.response.data.addressdata[i].pincode)

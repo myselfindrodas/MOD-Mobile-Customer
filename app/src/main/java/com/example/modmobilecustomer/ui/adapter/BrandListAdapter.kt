@@ -40,7 +40,7 @@ class BrandListAdapter(val context: Context, var onItemClickListener: BrandListO
 
             Glide.with(context)
                 .load(brandList[position].imgUrl)
-                .error(R.drawable.phone_image)
+                .error(R.drawable.modmobileph)
                 .placeholder(R.drawable.budget)
                 .into(imgBrand)
 

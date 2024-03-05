@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
@@ -53,10 +54,8 @@ import com.example.modmobilecustomer.ui.adapter.AddressAdapter
 import com.example.modmobilecustomer.ui.adapter.AndroidPhoneAdapter
 import com.example.modmobilecustomer.ui.adapter.BrandListAdapter
 import com.example.modmobilecustomer.ui.adapter.BrandPhoneAdapter
-import com.example.modmobilecustomer.ui.adapter.BudgetListAdapter
 import com.example.modmobilecustomer.ui.adapter.DayDealsAdapter
 import com.example.modmobilecustomer.ui.adapter.IPhoneAdapter
-import com.example.modmobilecustomer.ui.adapter.LatestEditionAdapter
 import com.example.modmobilecustomer.ui.adapter.VerticalBudgetListAdapter
 import com.example.modmobilecustomer.ui.adapter.VerticalLatestEditionAdapter
 import com.example.modmobilecustomer.utils.Constants.TAG
@@ -129,6 +128,9 @@ class ProductListFragment : Fragment(), DayDealsAdapter.DayDealsListOnItemClickL
     var orderdetailsItem = ArrayList<OrderDetail>()
     var PHONENAME = ""
     var invoicedetailsItem = ArrayList<InvoiceDetail>()
+
+    var spinnerFilterNameArray = ArrayList<String>()
+    var selectedFilterName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -323,74 +325,131 @@ class ProductListFragment : Fragment(), DayDealsAdapter.DayDealsListOnItemClickL
         }
             else {
 
-                binding.tvPhoneNameInProducts.text = brandname
-                binding.rvProductList.visibility = View.GONE
-                binding.iPhonesList.visibility = View.GONE
-                binding.rvBrandlist.visibility = View.VISIBLE
-                binding.rvTopBrandList.visibility = View.GONE
-                binding.rvBudgetList.visibility = View.GONE
-                binding.rvLatestEditionsList.visibility = View.GONE
+            binding.tvPhoneNameInProducts.text = brandname
+            binding.rvProductList.visibility = View.GONE
+            binding.iPhonesList.visibility = View.GONE
+            binding.rvBrandlist.visibility = View.VISIBLE
+            binding.rvTopBrandList.visibility = View.GONE
+            binding.rvBudgetList.visibility = View.GONE
+            binding.rvLatestEditionsList.visibility = View.GONE
+
+        }
+
+
+//            sortList = arrayOf(
+//                "Sort By",
+//                "Recently Added",
+//                "Most Relevant",
+//                "Popular",
+//                "Price: High-Low",
+//                "Price: Low-High"
+//            )
+//            val sortAdapter = ArrayAdapter(mainActivity, R.layout.spinner_text, sortList)
+//            binding.sortSpinner.adapter = sortAdapter
+
+        dayDealsAdapter = DayDealsAdapter(mainActivity, this@ProductListFragment)
+        binding.rvProductList.layoutManager = GridLayoutManager(mainActivity, 2)
+        binding.rvProductList.adapter = dayDealsAdapter
+
+
+        androidPhoneAdapter = AndroidPhoneAdapter(mainActivity, this@ProductListFragment)
+        binding.androidPhonesList.layoutManager = GridLayoutManager(mainActivity, 2)
+        binding.androidPhonesList.adapter = androidPhoneAdapter
+
+
+        iPhoneAdapter = IPhoneAdapter(mainActivity, this@ProductListFragment)
+        binding.iPhonesList.layoutManager = GridLayoutManager(mainActivity, 2)
+        binding.iPhonesList.adapter = iPhoneAdapter
+
+
+
+        brandPhoneAdapter = BrandPhoneAdapter(mainActivity, this@ProductListFragment)
+        binding.rvBrandlist.layoutManager = GridLayoutManager(mainActivity, 2)
+            binding.rvBrandlist.adapter = brandPhoneAdapter
+
+        brandListAdapter = BrandListAdapter(mainActivity, this@ProductListFragment)
+        binding.rvTopBrandList.layoutManager = GridLayoutManager(mainActivity, 4)
+        binding.rvTopBrandList.adapter = brandListAdapter
+
+        verticalBudgetListAdapter =
+            VerticalBudgetListAdapter(mainActivity, this@ProductListFragment)
+        binding.rvBudgetList.layoutManager = LinearLayoutManager(mainActivity)
+        binding.rvBudgetList.adapter = verticalBudgetListAdapter
+
+        latestEditionAdapter = VerticalLatestEditionAdapter(mainActivity, this@ProductListFragment)
+        binding.rvLatestEditionsList.layoutManager =
+            LinearLayoutManager(mainActivity)
+        binding.rvLatestEditionsList.adapter = latestEditionAdapter
+
+        binding.sortSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                if (position > 0) {
+                    selectedFilterName = spinnerFilterNameArray[binding.sortSpinner.selectedItemPosition]
+                    Log.d(TAG, "filter---->"+selectedFilterName)
+                    if (selectedFilterName.equals("Recently Added")) {
+
+                        getstocklist("Recently_add", brandid, hotdeals, pricerange, imeibox)
+
+                    } else if (selectedFilterName.equals("Price: High-Low")) {
+                        getstocklist("high_to_low", brandid, hotdeals, pricerange, imeibox)
+
+                    } else if (selectedFilterName.equals("Price: Low-High")) {
+
+                        getstocklist("low_to_hight", brandid, hotdeals, pricerange, imeibox)
+
+                    }
+
+                }
 
             }
 
-            sortList = arrayOf(
-                "Sort By",
-                "Recently Added",
-                "Most Relevant",
-                "Popular",
-                "Price: High-Low",
-                "Price: Low-High"
-            )
-            val sortAdapter = ArrayAdapter(mainActivity, R.layout.spinner_text, sortList)
-            binding.sortSpinner.adapter = sortAdapter
-
-            dayDealsAdapter = DayDealsAdapter(mainActivity, this@ProductListFragment)
-            binding.rvProductList.layoutManager = GridLayoutManager(mainActivity, 2)
-            binding.rvProductList.adapter = dayDealsAdapter
+            override fun onNothingSelected(parent: AdapterView<*>?) {
 
 
-            androidPhoneAdapter = AndroidPhoneAdapter(mainActivity, this@ProductListFragment)
-            binding.androidPhonesList.layoutManager = GridLayoutManager(mainActivity, 2)
-            binding.androidPhonesList.adapter = androidPhoneAdapter
+            }
+        }
 
 
-            iPhoneAdapter = IPhoneAdapter(mainActivity, this@ProductListFragment)
-            binding.iPhonesList.layoutManager = GridLayoutManager(mainActivity, 2)
-            binding.iPhonesList.adapter = iPhoneAdapter
+        getstocklist("", brandid, hotdeals, pricerange, imeibox)
+        DashboardList()
+        spfilter()
 
 
 
-            brandPhoneAdapter = BrandPhoneAdapter(mainActivity, this@ProductListFragment)
-            binding.rvBrandlist.layoutManager = GridLayoutManager(mainActivity, 2)
-            binding.rvBrandlist.adapter = brandPhoneAdapter
-
-            brandListAdapter = BrandListAdapter(mainActivity, this@ProductListFragment)
-            binding.rvTopBrandList.layoutManager = GridLayoutManager(mainActivity, 4)
-            binding.rvTopBrandList.adapter = brandListAdapter
-
-            verticalBudgetListAdapter = VerticalBudgetListAdapter(mainActivity, this@ProductListFragment)
-            binding.rvBudgetList.layoutManager = LinearLayoutManager(mainActivity)
-            binding.rvBudgetList.adapter = verticalBudgetListAdapter
-
-            latestEditionAdapter = VerticalLatestEditionAdapter(mainActivity, this@ProductListFragment)
-            binding.rvLatestEditionsList.layoutManager =
-            LinearLayoutManager(mainActivity)
-            binding.rvLatestEditionsList.adapter = latestEditionAdapter
 
 
-            getstocklist()
-            DashboardList()
 
 
+
+    }
+
+
+    private fun spfilter() {
+        spinnerFilterNameArray.add("Please Select")
+        spinnerFilterNameArray.add("Recently Added")
+        spinnerFilterNameArray.add("Price: High-Low")
+        spinnerFilterNameArray.add("Price: Low-High")
+        val arrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, spinnerFilterNameArray)
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.sortSpinner.adapter = arrayAdapter
     }
 
     private fun DashboardList() {
 
         if (Utilities.isNetworkAvailable(mainActivity)) {
 
-            viewModel.dashboard(DashboardRequest(token = Shared_Preferences.getToken().toString(),
-                user_id = Shared_Preferences.getUserId(),
-                user_type_app = "Customer"))
+            viewModel.dashboard(
+                DashboardRequest(
+                    token = Shared_Preferences.getToken().toString(),
+                    user_id = Shared_Preferences.getUserId(),
+                    user_type_app = "Customer"
+                )
+            )
                 .observe(mainActivity) {
                     it?.let { resource ->
                         when (resource.status) {
@@ -485,7 +544,7 @@ class ProductListFragment : Fragment(), DayDealsAdapter.DayDealsListOnItemClickL
     }
 
 
-    private fun getstocklist() {
+    private fun getstocklist(search:String, brandid:String, hotdeals:String, pricerange:String, imeibox:String) {
 
         try {
 
@@ -496,7 +555,7 @@ class ProductListFragment : Fragment(), DayDealsAdapter.DayDealsListOnItemClickL
                         ascCode = "MMWHDL002",
                         brandId = brandid,
                         hotDeal = hotdeals,
-                        search = "",
+                        search = search,
                         imei = "",
                         modelCode = "",
                         color = "",
