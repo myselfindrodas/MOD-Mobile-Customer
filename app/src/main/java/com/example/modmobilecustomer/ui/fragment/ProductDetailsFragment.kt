@@ -339,7 +339,7 @@ class ProductDetailsFragment : Fragment(), SlidingPhonesImageAdapter.OnItemClick
 
         storagecolor()
         getproductimage()
-        getrelatedproductlist(data?.model.toString())
+        getrelatedproductlist(data?.brandid.toString())
         productfeedback()
     }
 
@@ -1596,21 +1596,21 @@ class ProductDetailsFragment : Fragment(), SlidingPhonesImageAdapter.OnItemClick
 
     }
 
-    private fun getrelatedproductlist(modelname: String) {
+    private fun getrelatedproductlist(brandid: String) {
 
         if (Utilities.isNetworkAvailable(mainActivity)) {
 
             viewModel.getstock(
                 StockRequest(
                     ascCode = "MMWHDL002",
-                    brandId = "",
+                    brandId = brandid,
                     hotDeal = "",
                     search = "",
                     imei = "",
                     modelCode = "",
                     color = "",
                     memory = "",
-                    modelName = modelname,
+                    modelName = "",
                     phoneVersion = "",
                     price = "",
                     stockType = "",

@@ -82,7 +82,10 @@ class WriteReviewFragment : Fragment() {
         binding.tvOrderIdInReviewPage.text = data?.invoiceNo
         binding.tvMobileOffPriceInReviewPage.text = "₹ " + data?.itemTotal
         binding.tvMobileRealPriceInReviewPage.text = "₹ " + data?.mrp
-        binding.tvSavePriceOnMobileInReviewPage.text = "Save ₹ " + data?.itemTotal?.toFloat()?.minus(data?.purchasePrice?.toFloat()!!)
+//        binding.tvSavePriceOnMobileInReviewPage.text = "Save ₹ " + data?.itemTotal?.toFloat()?.minus(data?.purchasePrice?.toFloat()!!)
+        binding.tvSavePriceOnMobileInReviewPage.text = "Save ₹ "+data?.mrp?.toFloat()?.minus(data?.itemTotal?.toFloat()!!)
+
+//        binding.tvSavePriceOnMobileInReviewPage.text = "Save ₹ " + data?.discount
 
 
 
